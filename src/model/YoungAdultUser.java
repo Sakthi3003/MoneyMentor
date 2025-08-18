@@ -18,7 +18,6 @@ public class YoungAdultUser extends User{
 
 
   public void createBudget(Scanner scan) {
-
     String month = LocalDate.now().getMonth().getDisplayName(TextStyle.FULL, Locale.ENGLISH);
     int year = LocalDate.now().getYear();
 
@@ -75,12 +74,6 @@ public class YoungAdultUser extends User{
     }else{
       System.out.printf("\n        Budget for %s month is already created\n\n", month);
     }
-
-
-
-
-
-
   }
 
   public void addExpense(String month, Integer year, Scanner scan) {
@@ -175,10 +168,6 @@ public class YoungAdultUser extends User{
 
       // show the saving amount
       // show the remaining amount present
-
-
-
-      System.out.println("");
 
 
     }

@@ -2,6 +2,7 @@ package service;
 
 import model.User;
 import model.YoungAdultUser;
+import repo.QuizManager;
 import util.InputValidator;
 
 import java.util.Scanner;
@@ -24,7 +25,7 @@ public class UserService {
             System.out.println("4. Show Expense Summary");
             System.out.println("4. Add a New Saving Goal");
             System.out.println("5. Track Your Old Saving Goals");
-            System.out.println("6. Generate Month Financial Report");
+            System.out.println("6. Generate Monthly Financial Report");
             System.out.println("7. Take Financial Literacy Quiz");
             System.out.println("8. Exit");
             System.out.print("👉 Enter your choice: ");
@@ -55,9 +56,13 @@ public class UserService {
                     user.addSavingGoals(scan);
                     break;
                 case 6:
-                    System.out.println("   ➡ Generating Report...");
+                    System.out.println("   ➡ Track Saving Goal...");
                     break;
                 case 7:
+                    System.out.println("   ➡ Take Financial Literacy Quiz...");
+                    QuizManager.startQuiz(scan);
+                    break;
+                case 8:
                     System.out.println("✅ Thank you for using Expense Tracker. Goodbye!");
                     scan.close();
                     System.exit(0);

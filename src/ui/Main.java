@@ -65,7 +65,6 @@ public class Main {
         System.out.println("3. Exit");
     }
 
-
     // Printing Welcome message
     private static void showWelcomeMessage() {
 
