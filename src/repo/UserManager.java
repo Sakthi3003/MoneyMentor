@@ -1,4 +1,4 @@
-package model.repo;
+package repo;
 
 import model.Admin;
 import model.User;
@@ -17,7 +17,8 @@ public class UserManager {
 
     // Intialise Static inside Static blocks
     static{
-    users.put(usercount, new Admin(usercount, "Mark Jensen", "markadmin@gmail.com", "admin@123"));
+   // users.put(usercount, new Admin(usercount, "Mark Jensen", "markadmin@gmail.com", "admin@123"));
+        users.put(usercount, new Admin(usercount, "Mark Jensen", "m@g", "mmmmmm"));
     usercount++;
     users.put(usercount, new YoungAdultUser(usercount, "Jessica", "jessica@gmail.com", "jess@queen"));
     }

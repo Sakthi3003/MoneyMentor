@@ -1,7 +1,7 @@
 package model;
 
 public class Resource {
-    private Long Id;
+    private Long id;
     private String title;
     private String content;
     private String link;
@@ -11,7 +11,7 @@ public class Resource {
     }
 
     public Resource(Long id, String title, String content, String link, ResourceCategory category) {
-        Id = id;
+        this.id = id;
         this.title = title;
         this.content = content;
         this.link = link;
@@ -19,11 +19,11 @@ public class Resource {
     }
 
     public Long getId() {
-        return Id;
+        return id;
     }
 
     public void setId(Long id) {
-        Id = id;
+        id = id;
     }
 
     public String getTitle() {
@@ -57,4 +57,21 @@ public class Resource {
     public void setCategory(ResourceCategory category) {
         this.category = category;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("====================================\n");
+        sb.append("Resource ID   : ").append(id).append("\n");
+        sb.append("Title         : ").append(title).append("\n");
+        sb.append("Category      : ").append(category).append("\n");
+        sb.append("Content       : ").append(content).append("\n");
+        if (link != null) {
+            sb.append("Link          : ").append(link).append("\n");
+        }
+        sb.append("====================================");
+        return sb.toString();
+    }
+
+
 }

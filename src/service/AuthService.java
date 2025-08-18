@@ -1,7 +1,7 @@
 package service;
 
 import model.User;
-import model.repo.UserManager;
+import repo.UserManager;
 import util.InputValidator;
 
 import java.util.Optional;
@@ -26,7 +26,7 @@ public class AuthService {
                     .findFirst();
 
             if (user.isPresent()) {
-                System.out.println("\n✅ Login successful!\n");
+                System.out.println("\n        ✅ Login successful!\n");
                 return user.get();
             } else {
                 attempts--;
@@ -71,6 +71,4 @@ public class AuthService {
 
         System.out.println("✅ User registration successful!");
     }
-
-
 }

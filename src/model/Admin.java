@@ -1,6 +1,6 @@
 package model;
 
-import model.repo.ResourceManager;
+import repo.ResourceManager;
 
 import java.util.List;
 

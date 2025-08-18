@@ -1,11 +1,13 @@
 package ui;
 
 import java.util.Scanner;
+
 import model.Role;
 import model.User;
-import model.YoungAdultUser;
-import model.repo.UserManager;
+import repo.UserManager;
+import service.AdminService;
 import service.AuthService;
+import service.UserService;
 import util.InputValidator;
 
 public class Main {
@@ -13,7 +15,6 @@ public class Main {
 
     public static void main(String[] args) {
         showWelcomeMessage();
-        initializeValues();
 
         try (Scanner scan = new Scanner(System.in)) {
             runApplication(scan);
@@ -21,7 +22,7 @@ public class Main {
     }
 
     private static void runApplication(Scanner scan) {
-        Boolean exit = false;
+        boolean exit = false;
         while (!exit) {
 
             showMainMenu();
@@ -35,15 +36,15 @@ public class Main {
                     showThankYouMessage();
                     exit = true;
                 }
-                case 4 -> printuser();
-                default -> System.out.println("Invalid choice");
+                case 4 -> printUsers();
+                default -> System.out.println("\n       *** Invalid choice. Try Again!  ***\n");
             }
 
             if (currentUser != null) {
                 if (currentUser.getRole().equals(Role.USER)) {
-                    userMenu(scan);
+                    UserService.userMenu(scan, currentUser);
                 } else if (currentUser.getRole().equals(Role.ADMIN)) {
-                    adminMenu(scan);
+                    AdminService.adminMenu(scan, currentUser);
                 }
             }
 
@@ -64,10 +65,6 @@ public class Main {
         System.out.println("3. Exit");
     }
 
-    // Initializing Hardcoded values
-    private static void initializeValues() {
-
-    }
 
     // Printing Welcome message
     private static void showWelcomeMessage() {
@@ -79,81 +76,8 @@ public class Main {
         System.out.println("---------------------------------");
     }
 
-    // admin menu
-    private static void adminMenu(Scanner scan) {
-        System.out.println("========================================");
-        System.out.println("           Welcome Aboard, Admin!       ");
-        System.out.println("========================================");
-
-
-    }
-
-    // user menu
-    public static void userMenu(Scanner scan){
-        YoungAdultUser user = (YoungAdultUser) currentUser;
-        System.out.println("========================================");
-        System.out.println("        Welcome Aboard, " + user.getName() + "!       ");
-        System.out.println("========================================");
-
-        while(true) {
-
-            System.out.println("What would you like to do today? \n");
-            System.out.println("1. Add Budget");
-            System.out.println("2. Add an Expense");
-            System.out.println("3. Show Budget Summary");
-            System.out.println("4. Show Expense Summary");
-            System.out.println("4. Add a New Saving Goal");
-            System.out.println("5. Track Your Old Saving Goals");
-            System.out.println("6. Generate Report");
-            System.out.println("7. Exit");
-            System.out.print("👉 Enter your choice: ");
-
-            int choice = scan.nextInt();
-            scan.nextLine();
-
-            switch (choice) {
-                case 1:
-                    System.out.println("   ➡ Adding Budget...");
-                    user.createBudget(scan);
-                    break;
-                case 2:
-                    System.out.println("   ➡ Adding Expense...");
-                    String month = InputValidator.getStringInput(scan, "Enter month : ");
-                    Integer year = InputValidator.getIntegerInput(scan, "Enter year : ");
-                    user.addExpense(month, year, scan);
-                    break;
-                case 3:
-                    System.out.println("   ➡ Showing Budget Summary...");
-                    user.showBudgetSummary();
-                    break;
-                case 4:
-                    System.out.println("   ➡ Show Expense Summary...");
-                    break;
-                case 5:
-                    System.out.println("   ➡ Add Saving Goals...");
-                    user.addSavingGoals(scan);
-                    break;
-                case 6:
-                    System.out.println("   ➡ Generating Report...");
-                    break;
-                case 7:
-                    System.out.println("✅ Thank you for using Expense Tracker. Goodbye!");
-                    scan.close();
-                    System.exit(0);
-                    break;
-                default:
-                    System.out.println("❌ Invalid choice. Please try again.");
-            }
-        }
-    }
-
-
-    private static void printuser() {
+    private static void printUsers() {
         UserManager.getAllUsers().forEach(user -> System.out.println(user.getName()));
     }
-
-
-
-
 
 }
