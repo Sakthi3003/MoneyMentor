@@ -36,7 +36,11 @@ public class YoungAdultUser extends User{
       while (true) {
         System.out.print("Enter category name (or 'done' to finish): ");
         String categoryName = scan.nextLine();
-        if (categoryName.equalsIgnoreCase("done")) break;
+        if (categoryName.equalsIgnoreCase("done")){
+
+          System.out.println();
+          break;
+        }
 
         System.out.print("Enter allocated amount: ");
         double catAmount = scan.nextDouble();
@@ -46,6 +50,8 @@ public class YoungAdultUser extends User{
         Category cat = new Category(categoryName, catAmount);
         newBudget.addCategory(cat);
         System.out.printf("✅ Category %s added \n\n",cat.getName());
+        Double remaining = income - catAmount;
+        System.out.println(remaining + "");
       }
 
       budget.add(newBudget);
@@ -70,6 +76,26 @@ public class YoungAdultUser extends User{
 
         newBudget.addExpenseToCategory(catName, description, expAmount);
         newBudget.showSummary();
+      }
+
+      System.out.print("Do you want to set a savings goal? (y/n): ");
+      String saveAns = scan.nextLine();
+      if(saveAns.equalsIgnoreCase("y")) {
+        String goalName = InputValidator.getStringInput(scan, "Enter your goal: ");
+        double target = InputValidator.getDoubleInput(scan, "Target amount: ");
+        LocalDate due = InputValidator.getDateInput(scan, "Due date: ");
+        double initial = InputValidator.getDoubleInput(scan, "How much to save now: ");
+
+        if (initial > newBudget.getRemainingIncome()) {
+          System.out.println("⚠ Not enough income left!");
+        } else {
+          SavingsGoal goal = new SavingsGoal(goalName, target, due);
+          goal.addSavings(initial);
+          savingsGoals.add(goal);
+
+          newBudget.setIncome(newBudget.getIncome() - initial); // deduct savings
+          System.out.println("✅ Goal created: " + goalName);
+        }
       }
     }else{
       System.out.printf("\n        Budget for %s month is already created\n\n", month);
@@ -172,5 +198,53 @@ public class YoungAdultUser extends User{
 
     }
 
+  }
+
+
+
+  public void generateMonthlyReport(String month, int year) {
+    Optional<Budget> reportBudget = budget.stream()
+            .filter(b -> b.getMonth().equalsIgnoreCase(month) && b.getYear() == year)
+            .findFirst();
+
+    if (reportBudget.isPresent()) {
+      Budget b = reportBudget.get();
+
+      System.out.println("📊 Financial Health Report - " + month + " " + year);
+      System.out.println("-------------------------------------------------");
+      double savings = savingsGoals.stream().mapToDouble(SavingsGoal::getAmountSaved).sum();
+      double savingsRatio = savings / b.getIncome();
+      System.out.printf("Savings Ratio: %.2f%%\n", savingsRatio * 100);
+
+      // Check budget adherence
+      double totalSpent = b.getCategories().stream()
+              .mapToDouble(Category::totalSpent)
+              .sum();
+      double totalAllocated = b.getCategories().stream()
+              .mapToDouble(Category::getAllocatedAmount)
+              .sum();
+
+      double adherence = (1 - (Math.abs(totalSpent - totalAllocated) / totalAllocated)) * 100;
+      System.out.printf("Budget Adherence: %.2f%%\n", adherence);
+
+      // Alerts for overspending
+      System.out.println("\nOverspending Alerts:");
+      b.getCategories().forEach(c -> {
+        if (c.totalSpent() > c.getAllocatedAmount()) {
+          System.out.printf("⚠ Category %s exceeded budget! (Spent: %.2f, Allocated: %.2f)\n",
+                  c.getName(), c.totalSpent(), c.getAllocatedAmount());
+        }
+      });
+    } else {
+      System.out.println("❌ No budget found for " + month + " " + year);
+    }
+  }
+
+  public List<Budget> getBudget() {
+    return budget;
+  }
+
+  public List<SavingsGoal> getSavingsGoals() {
+    return savingsGoals;
   }
 }

@@ -10,10 +10,6 @@ public class Budget {
     private double income;
     private List<Category> categories = new ArrayList<>();
 
-    public Budget() {
-
-    }
-
     public Budget(int budgetId, String month, int year, double income) {
         this.budgetId = budgetId;
         this.month = month;
@@ -25,24 +21,12 @@ public class Budget {
         return budgetId;
     }
 
-    public void setBudgetId(int budgetId) {
-        this.budgetId = budgetId;
-    }
-
     public String getMonth() {
         return month;
     }
 
-    public void setMonth(String month) {
-        this.month = month;
-    }
-
     public double getIncome() {
         return income;
-    }
-
-    public void setIncome(double income) {
-        this.income = income;
     }
 
     public List<Category> getCategories(){
@@ -53,15 +37,9 @@ public class Budget {
         return year;
     }
 
-    public void setYear(int year) {
-        this.year = year;
-    }
-
     public void addCategory(Category cat) {
         categories.add(cat);
     }
-
-
 
     public void addExpenseToCategory(String categoryName,String description, double amount) {
         for (Category cat : categories) {
@@ -80,6 +58,15 @@ public class Budget {
         }
     }
 
+    public double getTotalAllocated() {
+        return categories.stream().mapToDouble(Category::getAllocatedAmount).sum();
+    }
+
+    public double getRemainingIncome() {
+        return income - getTotalAllocated();
+    }
+
+
     @Override
     public String toString() {
         return "Budget{" +
@@ -88,5 +75,9 @@ public class Budget {
                 ", income=" + income +
                 ", categories=" + categories +
                 '}';
+    }
+
+    public void setIncome(double v) {
+        this.income = income;
     }
 }

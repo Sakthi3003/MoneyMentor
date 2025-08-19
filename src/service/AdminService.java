@@ -1,12 +1,12 @@
 package service;
 
-import model.Admin;
-import model.Resource;
-import model.ResourceCategory;
-import model.User;
+import model.*;
 import repo.ResourceManager;
+import repo.UserManager;
 import util.InputValidator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 public class AdminService {
@@ -18,16 +18,6 @@ public class AdminService {
     }
 
 
-    public static void showAdminMenu() {
-        System.out.println("\n                **** Admin Menu **** \n");
-        System.out.println("1. View All Resources");
-        System.out.println("2. View Resources by Category");
-        System.out.println("3. Add Resource");
-        System.out.println("4. Edit Resource");
-        System.out.println("5. Delete Resource");
-        System.out.println("6. Financial Trends");
-        System.out.println("7. Logout");
-    }
 
     public static void viewAllResources() {
         ResourceManager
@@ -154,6 +144,19 @@ public class AdminService {
         }
     }
 
+    public static void showAdminMenu() {
+        System.out.println("\n                **** Admin Menu **** \n");
+        System.out.println("1. View All Resources");
+        System.out.println("2. View Resources by Category");
+        System.out.println("3. Add Resource");
+        System.out.println("4. Edit Resource");
+        System.out.println("5. Delete Resource");
+        System.out.println("6. Financial Trends");
+        System.out.println("7. View All Summaries");
+        System.out.println("8. Show Insights");
+        System.out.println("9. Logout");
+    }
+
     // admin menu
     public static void adminMenu(Scanner scan, User currentUser) {
         Admin admin = (Admin) currentUser;
@@ -169,22 +172,97 @@ public class AdminService {
             scan.nextLine(); // consume newline
 
             switch (choice) {
+                // View All Resources
                 case 1 -> AdminService.viewAllResources();
+
+                // View By category
                 case 2 -> {
                     AdminService.showAvailableCategory();
                     String category = InputValidator.getStringInput(scan, "Enter category : ");
                     AdminService.viewResourcesByCategory(category);
                 }
+
+                // Add resources
                 case 3 -> AdminService.addResource(scan);
+
+                // Edit resources
                 case 4 -> AdminService.editResource(scan);
+
+                // Delete Resources
                 case 5 -> AdminService.deleteResource(scan);
-                case 6 -> {
+
+                // Financial Trends
+                case 6 -> AdminService.financialTrends(scan);
+
+                // Show Users Summary
+                case 7 -> AdminService.showSummary();
+                
+                // Show common insights
+                case 8 -> AdminService.showCommonInsights();
+                
+                // Logout
+                case 9 -> {
                     System.out.println("👋 Logged out from Admin Menu!");
                     exit = true;
                 }
                 default -> System.out.println("⚠️ Invalid option! Please try again.");
             }
         }
+    }
+
+    public static void showCommonInsights() {
+        System.out.println("📊 Admin Insights");
+
+        // Most spent category across all users
+        Map<String, Double> categoryTotals = new HashMap<>();
+        for (User u : UserManager.getAllUsers()) {
+            if (u instanceof YoungAdultUser) {  // check if it's actually a YoungAdultUser
+                YoungAdultUser yau = (YoungAdultUser) u; // safe cast
+
+                for (Budget b : yau.getBudget()) {  // assuming it's a list of budgets
+                    for (Category c : b.getCategories()) {
+                        categoryTotals.put(
+                                c.getName(),
+                                categoryTotals.getOrDefault(c.getName(), 0.0) + c.totalSpent()
+                        );
+                    }
+                }
+            }
+        }
+
+
+        String maxCategory = categoryTotals.entrySet().stream()
+                .max(Map.Entry.comparingByValue())
+                .map(Map.Entry::getKey).orElse("None");
+
+        System.out.println("Most spent category across users: " + maxCategory);
+
+        for (User u : UserManager.getAllUsers()) {
+            // Only process if user is a YoungAdultUser
+            if (u instanceof YoungAdultUser) {
+                YoungAdultUser yau = (YoungAdultUser) u;
+
+                // Loop through savings goals
+                for (SavingsGoal g : yau.getSavingsGoals()) {
+                    if (g.getAmountSaved() < g.getTargetAmount()) {
+                        System.out.printf("User %s has not met savings goal %s\n",
+                                u.getName(), g.getName());
+                    }
+                }
+            }
+        }
+
+    }
+
+
+    private static void showSummary() {
+        UserManager.getAllUsers().stream()
+                .filter(user -> user instanceof YoungAdultUser)
+                .map(user -> (YoungAdultUser) user)
+                .forEach(YoungAdultUser::showBudgetSummary);
+    }
+
+    private static void financialTrends(Scanner scan) {
     }
 
 }

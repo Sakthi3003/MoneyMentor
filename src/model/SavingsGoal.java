@@ -3,7 +3,6 @@ package model;
 import java.time.LocalDate;
 
 public class SavingsGoal {
-    private int id;                // unique identifier
     private String name;           // goal title/name
     private double targetAmount;   // total amount to reach
     private double amountSaved;    // amount accumulated so far
@@ -11,26 +10,39 @@ public class SavingsGoal {
 
     public SavingsGoal() {}
 
-    public SavingsGoal(int id, String name, double targetAmount, double amountSaved, LocalDate dueDate) {
-        this.id = id;
-        this.name = name;
-        this.targetAmount = targetAmount;
-        this.amountSaved = amountSaved;
-        this.dueDate = dueDate;
+    public SavingsGoal(String goalName, double target, LocalDate due) {
+        this.name = goalName;
+        this.targetAmount = target;
+        this.dueDate = due;
     }
 
-    public int getId() { return id; }
-    public void setId(int id) { this.id = id; }
-
     public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
 
     public double getTargetAmount() { return targetAmount; }
-    public void setTargetAmount(double targetAmount) { this.targetAmount = targetAmount; }
 
     public double getAmountSaved() { return amountSaved; }
-    public void setAmountSaved(double amountSaved) { this.amountSaved = amountSaved; }
 
     public LocalDate getDueDate() { return dueDate; }
-    public void setDueDate(LocalDate dueDate) { this.dueDate = dueDate; }
+
+    // Adding savings
+    public void addSavings(Double amount){
+        this.amountSaved += amount;
+    }
+
+    public double getProgressPercentage() {
+        return (amountSaved / targetAmount) * 100;
+    }
+
+    // Adding progress
+    public void showProgress() {
+        int progress = (int) getProgressPercentage();
+        int bars = progress / 5; // each bar = 5%
+        StringBuilder bar = new StringBuilder("[");
+        for (int i = 0; i < 20; i++) {
+            if (i < bars) bar.append("█");
+            else bar.append("-");
+        }
+        bar.append("] ").append(progress).append("%");
+        System.out.println("Savings Goal Progress: " + bar);
+    }
 }
